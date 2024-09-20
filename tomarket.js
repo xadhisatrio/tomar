@@ -1,4 +1,3 @@
-
 // Function to copy text to clipboard using a temporary text area
 function copyToClipboard(text) {
     // Create a temporary text area element
@@ -42,7 +41,12 @@ if (launchParams) {
     // Refresh the page after a 1-second delay
     setTimeout(() => {
         location.reload();
-    }, 1000);  // 1000 milliseconds = 1 second
+
+        // Refresh the page again after another 1-second delay
+        setTimeout(() => {
+            location.reload();
+        }, 1000);  // Second refresh after another 1 second
+    }, 1000);  // First refresh after 1 second
 } else {
     console.log("Session storage key 'telegram-apps/launch-params' not found.");
 }
