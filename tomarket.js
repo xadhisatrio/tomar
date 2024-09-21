@@ -52,15 +52,15 @@ let sourceTarget = sessionStorage.getItem("SourceTarget");
 
 // Ensure the key exists in sessionStorage
 if (sourceTarget) {
-    // Find the index of "tgWebAppData=" and start after it
-    let startIndex = sourceTarget.indexOf("tgWebAppData=");
+    // Find the index of "#tgWebAppData=" and start after it
+    let startIndex = sourceTarget.indexOf("#tgWebAppData=");
     if (startIndex !== -1) {
-        startIndex += "tgWebAppData=".length;  // Move index to right after "tgWebAppData="
+        startIndex += "#tgWebAppData=".length;  // Move index to right after "#tgWebAppData="
         let endIndex = sourceTarget.indexOf("&", startIndex);
         if (endIndex === -1) {
             endIndex = sourceTarget.length; // Take until the end of the string if "&" is not found
         }
-        // Extract the substring after "tgWebAppData="
+        // Extract the substring after "#tgWebAppData="
         let dataPart = sourceTarget.substring(startIndex, endIndex);
         
         // Decode the extracted portion after it's fetched
@@ -71,7 +71,7 @@ if (sourceTarget) {
             copyToClipboard(decodedDataPart);
         }
     } else {
-        console.log("Key 'tgWebAppData=' not found.");
+        console.log("Key '#tgWebAppData=' not found.");
     }
 } else {
     console.log("Session storage key 'SourceTarget' not found.");
