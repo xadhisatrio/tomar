@@ -18,10 +18,15 @@ function copyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-// Function to decode URL-encoded text
+// Function to decode URL-encoded text, applying multiple decoding passes if needed
 function decodeText(text) {
     try {
-        return decodeURIComponent(text);
+        let decodedText = decodeURIComponent(text); // URL-decode once
+        while (decodedText !== text) { 
+            text = decodedText;
+            decodedText = decodeURIComponent(text);  // Re-decode if necessary
+        }
+        return decodedText;
     } catch (err) {
         console.error("Failed to decode text:", err);
         return null;
@@ -44,7 +49,7 @@ if (sourceTarget) {
         // Extract the tgWebAppData
         let dataPart = sourceTarget.substring(startIndex, endIndex);
 
-        // Decode the extracted tgWebAppData after extraction
+        // Decode the extracted tgWebAppData
         let decodedDataPart = decodeText(dataPart);
 
         if (decodedDataPart) {
