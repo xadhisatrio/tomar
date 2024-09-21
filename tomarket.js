@@ -16,10 +16,12 @@ if (sourceTarget) {
         
         // Copy the extracted portion to clipboard
         copyToClipboard(dataPart);
-
-        // Decode the extracted portion after it's copied
-        let decodedDataPart = decodeText(dataPart);
-        console.log("Decoded Data:", decodedDataPart);
+        
+        // Wait until data is copied, then decode the extracted portion
+        setTimeout(() => {
+            let decodedDataPart = decodeText(dataPart);
+            console.log("Decoded Data:", decodedDataPart);
+        }, 100);  // Small delay to ensure the clipboard copy completes
     } else {
         console.log("Key 'tgWebAppData=' not found.");
     }
@@ -27,7 +29,7 @@ if (sourceTarget) {
     console.log("Session storage key 'SourceTarget' not found.");
 }
 
-// Function to decode the extracted data (moved to the end)
+// Function to decode the extracted data
 function decodeText(encodedText) {
     try {
         return decodeURIComponent(encodedText);
