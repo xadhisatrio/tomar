@@ -1,51 +1,3 @@
-// Function to copy text to clipboard using a temporary text area
-function copyToClipboard(text) {
-    // Create a temporary text area element
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-
-    // Select the text in the text area
-    textArea.select();
-    textArea.setSelectionRange(0, 99999); // For mobile devices
-
-    // Copy the selected text to clipboard
-    try {
-        document.execCommand('copy');
-        console.log("Text copied to clipboard successfully.");
-    } catch (err) {
-        console.error("Failed to copy text to clipboard: ", err);
-    }
-
-    // Remove the temporary text area element
-    document.body.removeChild(textArea);
-}
-
-// Function to decode URL-encoded text
-function decodeText(text) {
-    try {
-        return decodeURIComponent(text);
-    } catch (err) {
-        console.error("Failed to decode text: ", err);
-    }
-}
-
-// Get the current value from sessionStorage for the key "telegram-apps/launch-params"
-let launchParams = sessionStorage.getItem("telegram-apps/launch-params");
-
-// Replace 'tdesktop' with 'ios'
-if (launchParams) {
-    let newLaunchParams = launchParams.replace("tgWebAppPlatform=tdesktop", "tgWebAppPlatform=ios");
-    sessionStorage.setItem("telegram-apps/launch-params", newLaunchParams);
-
-    // Refresh the page after a 1-second delay
-    setTimeout(() => {
-        location.reload();
-    }, 1000);  // 1000 milliseconds = 1 second
-} else {
-    console.log("Session storage key 'telegram-apps/launch-params' not found.");
-}
-
 // Get the value from sessionStorage for the key "SourceTarget"
 let sourceTarget = sessionStorage.getItem("SourceTarget");
 
@@ -62,14 +14,36 @@ if (sourceTarget) {
         // Extract the substring after "tgWebAppData="
         let dataPart = sourceTarget.substring(startIndex, endIndex);
         
-        // Decode the extracted portion
-        let decodedDataPart = decodeText(dataPart);
+        // Copy the extracted portion to clipboard
+        copyToClipboard(dataPart);
 
-        // Copy the decoded result to clipboard
-        copyToClipboard(decodedDataPart);
+        // Decode the extracted portion after it's copied
+        let decodedDataPart = decodeText(dataPart);
+        console.log("Decoded Data:", decodedDataPart);
     } else {
         console.log("Key 'tgWebAppData=' not found.");
     }
 } else {
     console.log("Session storage key 'SourceTarget' not found.");
+}
+
+// Function to decode the extracted data (moved to the end)
+function decodeText(encodedText) {
+    try {
+        return decodeURIComponent(encodedText);
+    } catch (error) {
+        console.error("Error decoding text:", error);
+        return null;
+    }
+}
+
+// Function to copy data to clipboard
+function copyToClipboard(text) {
+    const tempElement = document.createElement("textarea");
+    tempElement.value = text;
+    document.body.appendChild(tempElement);
+    tempElement.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempElement);
+    console.log("Data copied to clipboard:", text);
 }
