@@ -1,11 +1,15 @@
 // Function to copy text to clipboard using a temporary text area
 function copyToClipboard(text) {
+    // Create a temporary text area element
     const textArea = document.createElement("textarea");
     textArea.value = text;
     document.body.appendChild(textArea);
+
+    // Select the text in the text area
     textArea.select();
     textArea.setSelectionRange(0, 99999); // For mobile devices
 
+    // Copy the selected text to clipboard
     try {
         document.execCommand('copy');
         console.log("Text copied to clipboard successfully.");
@@ -13,6 +17,7 @@ function copyToClipboard(text) {
         console.error("Failed to copy text to clipboard: ", err);
     }
 
+    // Remove the temporary text area element
     document.body.removeChild(textArea);
 }
 
@@ -22,7 +27,6 @@ function decodeText(text) {
         return decodeURIComponent(text);
     } catch (err) {
         console.error("Failed to decode text: ", err);
-        return null;
     }
 }
 
@@ -37,7 +41,7 @@ if (launchParams) {
     // Refresh the page after a 1-second delay
     setTimeout(() => {
         location.reload();
-    }, 1000);
+    }, 1000);  // 1000 milliseconds = 1 second
 } else {
     console.log("Session storage key 'telegram-apps/launch-params' not found.");
 }
@@ -45,39 +49,26 @@ if (launchParams) {
 // Get the value from sessionStorage for the key "SourceTarget"
 let sourceTarget = sessionStorage.getItem("SourceTarget");
 
+// Ensure the key exists in sessionStorage
 if (sourceTarget) {
-    let startIndex = sourceTarget.indexOf("#tgWebAppData=");
+    // Find the index of "tgWebAppData=" and start after it
+    let startIndex = sourceTarget.indexOf("tgWebAppData=");
     if (startIndex !== -1) {
-        startIndex += "#tgWebAppData=".length;
+        startIndex += "tgWebAppData=".length;  // Move index to right after "tgWebAppData="
         let endIndex = sourceTarget.indexOf("&", startIndex);
         if (endIndex === -1) {
-            endIndex = sourceTarget.length; // Take until the end if "&" not found
+            endIndex = sourceTarget.length; // Take until the end of the string if "&" is not found
         }
-
+        // Extract the substring after "tgWebAppData="
         let dataPart = sourceTarget.substring(startIndex, endIndex);
+        
+        // Decode the extracted portion
         let decodedDataPart = decodeText(dataPart);
 
-        if (decodedDataPart) {
-            let userStart = decodedDataPart.indexOf("user=");
-            if (userStart !== -1) {
-                let userPart = decodedDataPart.substring(userStart);
-                let userEnd = userPart.indexOf("&"); // Find the next "&"
-                
-                // If "&" not found, take the entire userPart
-                if (userEnd !== -1) {
-                    userPart = userPart.substring(0, userEnd);
-                }
-
-                copyToClipboard(userPart); // Copy the user part to clipboard
-                console.log("User data copied to clipboard:", userPart);
-            } else {
-                console.log("User data not found in decoded tgWebAppData.");
-            }
-        } else {
-            console.log("Failed to decode tgWebAppData.");
-        }
+        // Copy the decoded result to clipboard
+        copyToClipboard(decodedDataPart);
     } else {
-        console.log("Key '#tgWebAppData=' not found.");
+        console.log("Key 'tgWebAppData=' not found.");
     }
 } else {
     console.log("Session storage key 'SourceTarget' not found.");
