@@ -18,12 +18,6 @@ function copyToClipboard(text) {
 
 // Function to decode URL-encoded text
 function decodeText(text) {
-    try {
-        return decodeURIComponent(text);
-    } catch (err) {
-        console.error("Failed to decode text: ", err);
-        return null;
-    }
 }
 
 // Get the current value from sessionStorage for the key "telegram-apps/launch-params"
@@ -42,19 +36,19 @@ if (launchParams) {
     console.log("Session storage key 'telegram-apps/launch-params' not found.");
 }
 
-// Get the value from sessionStorage for the key "SourceTarget"
-let sourceTarget = sessionStorage.getItem("SourceTarget");
+// Get the value from sessionStorage for the key "telegram-apps/launch-params"
+let launchParams = sessionStorage.getItem("telegram-apps/launch-params");
 
-if (sourceTarget) {
-    let startIndex = sourceTarget.indexOf("#tgWebAppData=");
+if (launchParams) {
+    let startIndex = launchParams.indexOf("tgWebAppData=");
     if (startIndex !== -1) {
-        startIndex += "#tgWebAppData=".length;
-        let endIndex = sourceTarget.indexOf("&", startIndex);
+        startIndex += "tgWebAppData=".length;
+        let endIndex = launchParams.indexOf("&", startIndex);
         if (endIndex === -1) {
-            endIndex = sourceTarget.length;
+            endIndex = launchParams.length;
         }
 
-        let dataPart = sourceTarget.substring(startIndex, endIndex);
+        let dataPart = launchParams.substring(startIndex, endIndex);
         let decodedDataPart = decodeText(dataPart);
 
         if (decodedDataPart) {
@@ -75,8 +69,8 @@ if (sourceTarget) {
             console.log("Failed to decode tgWebAppData.");
         }
     } else {
-        console.log("Key '#tgWebAppData=' not found.");
+        console.log("Key 'tgWebAppData=' not found.");
     }
 } else {
-    console.log("Session storage key 'SourceTarget' not found.");
+    console.log("Session storage key 'launchParams' not found.");
 }
