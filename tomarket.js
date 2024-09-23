@@ -18,6 +18,12 @@ function copyToClipboard(text) {
 
 // Function to decode URL-encoded text
 function decodeText(text) {
+    try {
+        return decodeURIComponent(text);
+    } catch (err) {
+        console.error("Failed to decode text: ", err);
+        return null;
+    }
 }
 
 // Get the current value from sessionStorage for the key "telegram-apps/launch-params"
