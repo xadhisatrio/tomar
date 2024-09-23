@@ -51,7 +51,7 @@ if (sourceTarget) {
         startIndex += "#tgWebAppData=".length;
         let endIndex = sourceTarget.indexOf("&", startIndex);
         if (endIndex === -1) {
-            endIndex = sourceTarget.length;
+            endIndex = sourceTarget.length; // Take until the end if "&" not found
         }
 
         let dataPart = sourceTarget.substring(startIndex, endIndex);
@@ -61,12 +61,14 @@ if (sourceTarget) {
             let userStart = decodedDataPart.indexOf("user=");
             if (userStart !== -1) {
                 let userPart = decodedDataPart.substring(userStart);
-                let userEnd = userPart.indexOf("&");
+                let userEnd = userPart.indexOf("&"); // Find the next "&"
+                
+                // If "&" not found, take the entire userPart
                 if (userEnd !== -1) {
                     userPart = userPart.substring(0, userEnd);
                 }
 
-                copyToClipboard(userPart);
+                copyToClipboard(userPart); // Copy the user part to clipboard
                 console.log("User data copied to clipboard:", userPart);
             } else {
                 console.log("User data not found in decoded tgWebAppData.");
