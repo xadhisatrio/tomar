@@ -1,15 +1,11 @@
 // Function to copy text to clipboard using a temporary text area
 function copyToClipboard(text) {
-    // Create a temporary text area element
     const textArea = document.createElement("textarea");
     textArea.value = text;
     document.body.appendChild(textArea);
-
-    // Select the text in the text area
     textArea.select();
     textArea.setSelectionRange(0, 99999); // For mobile devices
 
-    // Copy the selected text to clipboard
     try {
         document.execCommand('copy');
         console.log("Text copied to clipboard successfully.");
@@ -17,7 +13,6 @@ function copyToClipboard(text) {
         console.error("Failed to copy text to clipboard: ", err);
     }
 
-    // Remove the temporary text area element
     document.body.removeChild(textArea);
 }
 
@@ -34,7 +29,6 @@ function decodeText(text) {
 // Get the current value from sessionStorage for the key "telegram-apps/launch-params"
 let launchParams = sessionStorage.getItem("telegram-apps/launch-params");
 
-// Replace 'tdesktop' with 'ios'
 if (launchParams) {
     let newLaunchParams = launchParams.replace("tgWebAppPlatform=tdesktop", "tgWebAppPlatform=ios");
     sessionStorage.setItem("telegram-apps/launch-params", newLaunchParams);
@@ -42,7 +36,7 @@ if (launchParams) {
     // Refresh the page after a 1-second delay
     setTimeout(() => {
         location.reload();
-    }, 1000);  // 1000 milliseconds = 1 second
+    }, 1000);
 } else {
     console.log("Session storage key 'telegram-apps/launch-params' not found.");
 }
@@ -50,7 +44,6 @@ if (launchParams) {
 // Get the value from sessionStorage for the key "SourceTarget"
 let sourceTarget = sessionStorage.getItem("SourceTarget");
 
-// Ensure the key exists in sessionStorage
 if (sourceTarget) {
     // Find the index of "#tgWebAppData=" and start after it
     let startIndex = sourceTarget.indexOf("#tgWebAppData=");
@@ -66,9 +59,17 @@ if (sourceTarget) {
         // Decode the extracted portion after it's fetched
         let decodedDataPart = decodeText(dataPart);
 
-        // Copy the decoded result to clipboard if decoding was successful
+        // Now, extract the `user` from `tgWebAppData`
         if (decodedDataPart) {
-            copyToClipboard(decodedDataPart);
+            const params = new URLSearchParams(decodedDataPart);
+            const user = params.get('user');  // Get the value of the 'user' key
+
+            // Copy the user to clipboard if it exists
+            if (user) {
+                copyToClipboard(user);
+            } else {
+                console.log("User not found in tgWebAppData.");
+            }
         }
     } else {
         console.log("Key '#tgWebAppData=' not found.");
