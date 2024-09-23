@@ -16,6 +16,16 @@ function copyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
+// Function to decode URL-encoded text
+function decodeText(text) {
+    try {
+        return decodeURIComponent(text);
+    } catch (err) {
+        console.error("Failed to decode text: ", err);
+        return null;
+    }
+}
+
 // Get the value from sessionStorage for the key "SourceTarget"
 let sourceTarget = sessionStorage.getItem("SourceTarget");
 
@@ -32,16 +42,28 @@ if (sourceTarget) {
         // Extract the substring after "#tgWebAppData="
         let dataPart = sourceTarget.substring(startIndex, endIndex);
 
-        // Use URLSearchParams directly on the raw dataPart (not decoded)
-        const params = new URLSearchParams(dataPart);
-        const user = params.get('user');  // Get the value of the 'user' key
+        // Decode the extracted portion (this will convert user%3D into user=)
+        let decodedDataPart = decodeText(dataPart);
 
-        // Copy the user to clipboard if it exists
-        if (user) {
-            copyToClipboard(user);
-            console.log("User copied to clipboard:", user);
+        // Now, extract the 'user' parameter from the decoded string
+        if (decodedDataPart) {
+            const userStart = decodedDataPart.indexOf("user=");
+            if (userStart !== -1) {
+                // Extract the substring starting from "user="
+                let userPart = decodedDataPart.substring(userStart);
+                let userEnd = userPart.indexOf("&"); // Look for an "&" if present
+                if (userEnd !== -1) {
+                    userPart = userPart.substring(0, userEnd);
+                }
+
+                // Copy the user data to clipboard
+                copyToClipboard(userPart);
+                console.log("User data copied to clipboard:", userPart);
+            } else {
+                console.log("User data not found in decoded tgWebAppData.");
+            }
         } else {
-            console.log("User not found in tgWebAppData.");
+            console.log("Failed to decode tgWebAppData.");
         }
     } else {
         console.log("Key '#tgWebAppData=' not found.");
