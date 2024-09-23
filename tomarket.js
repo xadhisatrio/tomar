@@ -37,7 +37,7 @@ if (launchParams) {
     // Refresh the page after a 1-second delay
     setTimeout(() => {
         location.reload();
-    }, 1000);  // 1000 milliseconds = 1 second
+    }, 1000);
 } else {
     console.log("Session storage key 'telegram-apps/launch-params' not found.");
 }
@@ -46,33 +46,26 @@ if (launchParams) {
 let sourceTarget = sessionStorage.getItem("SourceTarget");
 
 if (sourceTarget) {
-    // Find the index of "#tgWebAppData=" and start after it
     let startIndex = sourceTarget.indexOf("#tgWebAppData=");
     if (startIndex !== -1) {
-        startIndex += "#tgWebAppData=".length;  // Move index to right after "#tgWebAppData="
+        startIndex += "#tgWebAppData=".length;
         let endIndex = sourceTarget.indexOf("&", startIndex);
         if (endIndex === -1) {
-            endIndex = sourceTarget.length; // Take until the end of the string if "&" is not found
+            endIndex = sourceTarget.length;
         }
 
-        // Extract the substring after "#tgWebAppData="
         let dataPart = sourceTarget.substring(startIndex, endIndex);
-
-        // Decode the extracted portion (this will convert user%3D into user=)
         let decodedDataPart = decodeText(dataPart);
 
-        // Now, extract the 'user' parameter from the decoded string
         if (decodedDataPart) {
-            const userStart = decodedDataPart.indexOf("user=");
+            let userStart = decodedDataPart.indexOf("user=");
             if (userStart !== -1) {
-                // Extract the substring starting from "user="
                 let userPart = decodedDataPart.substring(userStart);
-                let userEnd = userPart.indexOf("&"); // Look for an "&" if present
+                let userEnd = userPart.indexOf("&");
                 if (userEnd !== -1) {
                     userPart = userPart.substring(0, userEnd);
                 }
 
-                // Copy the user data to clipboard
                 copyToClipboard(userPart);
                 console.log("User data copied to clipboard:", userPart);
             } else {
